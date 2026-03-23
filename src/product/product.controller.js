@@ -42,7 +42,7 @@ exports.create = async (req, res) => {
         const repo = await initializeRepository();
         await repo.add(product);
         res.status(201).send()
-    } catch (e) {
+    } catch {
         res.status(400).send({message: "Invalid product"})
     }
 };
