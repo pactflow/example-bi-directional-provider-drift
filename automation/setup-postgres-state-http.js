@@ -45,12 +45,15 @@ const initializePool = async () => {
             await pool.query(`
                 CREATE TABLE IF NOT EXISTS products (
                     id VARCHAR(255) PRIMARY KEY,
-                    product_id INTEGER NOT NULL,
                     type VARCHAR(255) NOT NULL,
                     name VARCHAR(255) NOT NULL,
-                    version VARCHAR(50)
+                    version VARCHAR(50),
+                    price NUMERIC(10, 2) NOT NULL
                 )
             `);
+            await pool.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS price NUMERIC(10, 2)');
+            await pool.query('UPDATE products SET price = 0 WHERE price IS NULL');
+            await pool.query('ALTER TABLE products ALTER COLUMN price SET NOT NULL');
             console.log('Database initialized successfully');
             return;
         } catch (error) {
@@ -84,14 +87,14 @@ const setupStateHandlers = {
     getAllProducts_Success: async (pool) => {
         await pool.query('DELETE FROM products');
         const products = [
-            [9, "CREDIT_CARD", "Gem Visa", "v1"],
-            [10, "CREDIT_CARD", "28 Degrees", "v1"],
-            [11, "PERSONAL_LOAN", "MyFlexiPay", "v2"],
+            ["9", "CREDIT_CARD", "Gem Visa", "v1", 59.95],
+            ["10", "CREDIT_CARD", "28 Degrees", "v1", 28.0],
+            ["11", "PERSONAL_LOAN", "MyFlexiPay", "v2", 199.0],
         ];
-        for (const [id, type, name, version] of products) {
+        for (const [id, type, name, version, price] of products) {
             await pool.query(
-                'INSERT INTO products (id, product_id, type, name, version) VALUES ($1, $2, $3, $4, $5)',
-                [String(id), id, type, name, version]
+                'INSERT INTO products (id, type, name, version, price) VALUES ($1, $2, $3, $4, $5)',
+                [id, type, name, version, price]
             );
         }
     },
@@ -114,8 +117,8 @@ const setupStateHandlers = {
     getProductByID_Success: async (pool) => {
         await pool.query('DELETE FROM products');
         await pool.query(
-            'INSERT INTO products (id, product_id, type, name, version) VALUES ($1, $2, $3, $4, $5)',
-            ['10', 10, 'CREDIT_CARD', '28 Degrees', 'v1']
+            'INSERT INTO products (id, type, name, version, price) VALUES ($1, $2, $3, $4, $5)',
+            ['10', 'CREDIT_CARD', '28 Degrees', 'v1', 28.0]
         );
     },
     getProductByID_InvalidID: async (pool) => {
@@ -138,12 +141,15 @@ const setupState = async (operationId) => {
         await pool.query(`
             CREATE TABLE IF NOT EXISTS products (
                 id VARCHAR(255) PRIMARY KEY,
-                product_id INTEGER NOT NULL,
                 type VARCHAR(255) NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                version VARCHAR(50)
+                version VARCHAR(50),
+                price NUMERIC(10, 2) NOT NULL
             )
         `);
+        await pool.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS price NUMERIC(10, 2)');
+        await pool.query('UPDATE products SET price = 0 WHERE price IS NULL');
+        await pool.query('ALTER TABLE products ALTER COLUMN price SET NOT NULL');
 
         // Run the setup handler
         if (!setupStateHandlers[operationId]) {

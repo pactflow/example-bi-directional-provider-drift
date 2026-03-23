@@ -25,7 +25,7 @@ paths:
               examples:
                 application/json:
                   value:
-                    - id: 10
+                    - id: "10"
                       type: "beverage"
                       price: 10.99
                       name: "cola"
@@ -48,7 +48,7 @@ paths:
             examples:
               application/json:
                 value:
-                  id: 666
+                  id: "666"
                   type: "beverage"
                   price: 10.99
                   name: "cola"
@@ -75,8 +75,8 @@ paths:
         style: simple
         explode: false
         schema:
-          type: number
-        example: 10
+          type: string
+        example: "10"
       responses:
         "200":
           description: successful operation
@@ -87,7 +87,7 @@ paths:
               examples:
                 application/json:
                   value:
-                    id: 10
+                    id: "666"
                     type: "beverage"
                     price: 10.99
                     name: "cola"

@@ -34,7 +34,6 @@ plugins:
   - name: oas           # validates responses against the OpenAPI spec
   - name: json          # JSON request/response handling
   - name: data          # enables ${product-data:...} dataset interpolation
-  - name: http-dump     # logs request/response details on failure
   - name: junit-output  # writes a JUnit XML report to output/reports/junit/
 
 global:
@@ -108,7 +107,7 @@ operations:
         authorization: "Bearer invalid-token"
       request:
         body:
-          id: 20
+          id: "20"
           name: "test product"
     expected:
       response:
@@ -128,19 +127,6 @@ operations:
       response:
         statusCode: 200
 
-  # GIVEN a valid bearer token and invalid product ID
-  # WHEN getting a product by ID
-  # THEN expect 400 Bad Request response
-  getProductByID_InvalidID:
-    target: source-oas:getProductByID
-    description: "Get a product with invalid ID format"
-    parameters:
-      path:
-        id: "invalid"
-    expected:
-      response:
-        statusCode: 400
-
   # GIVEN a valid bearer token and non-existent product ID
   # WHEN getting a product by ID
   # THEN expect 404 Not Found response
@@ -149,7 +135,7 @@ operations:
     description: "Get a product that does not exist"
     parameters:
       path:
-        id: 99999
+        id: "99999"
     expected:
       response:
         statusCode: 404
@@ -166,7 +152,7 @@ operations:
       headers:
         authorization: "Bearer invalid-token"
       path:
-        id: 10
+        id: "10"
     expected:
       response:
         statusCode: 401

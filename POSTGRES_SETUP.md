@@ -112,10 +112,10 @@ The PostgreSQL repository uses a single `products` table:
 ```sql
 CREATE TABLE products (
     id VARCHAR(255) PRIMARY KEY,
-    product_id INTEGER NOT NULL,
     type VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
-    version VARCHAR(50)
+  version VARCHAR(50),
+  price NUMERIC(10, 2) NOT NULL
 );
 ```
 

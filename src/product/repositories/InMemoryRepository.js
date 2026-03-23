@@ -1,9 +1,9 @@
 const Product = require('../product');
 
 const defaultProducts = [
-    ["9", new Product(9, "CREDIT_CARD", "Gem Visa", "v1")],
-    ["10", new Product(10, "CREDIT_CARD", "28 Degrees", "v1")],
-    ["11", new Product(11, "PERSONAL_LOAN", "MyFlexiPay", "v2")],
+    ["9", new Product("9", "CREDIT_CARD", "Gem Visa", "v1", 59.95)],
+    ["10", new Product("10", "CREDIT_CARD", "28 Degrees", "v1", 28.0)],
+    ["11", new Product("11", "PERSONAL_LOAN", "MyFlexiPay", "v2", 199.0)],
 ];
 
 class InMemoryRepository {
@@ -31,7 +31,7 @@ class InMemoryRepository {
         for (const product of productList) {
             const normalized = product instanceof Product
                 ? product
-                : new Product(product.id, product.type, product.name, product.version);
+                : new Product(product.id, product.type, product.name, product.version, product.price);
             this.products.set(`${normalized.id}`, normalized)
         }
     }

@@ -1,10 +1,11 @@
 class Product {
-    constructor(id, type, name, version) {
+    constructor(id, type, name, version, price) {
         this.id = id;
         this.type = type;
         this.name = name;
         this.version = version;
-        if (!id || !type || !name) {
+        this.price = price;
+        if (!id || !type || !name || price === undefined || price === null) {
             throw new Error("Invalid product");
         }
     }

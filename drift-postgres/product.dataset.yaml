@@ -4,13 +4,13 @@ datasets:
     data:
       products:
         product10:
-          id: 10
+          id: "10"
           type: "beverage"
           price: 10.99
           name: "cola"
           version: "1.0.0"
         product20:
-          id: 20
+          id: "20"
           type: "food"
           price: 5.49
           name: "chips"

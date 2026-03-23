@@ -31,9 +31,9 @@ const setupStateHandlers = {
   // GET /products — expects an array of products
   getAllProducts_Success: async (repo) => {
     await repo.setupProducts([
-      new Product(9, "CREDIT_CARD", "Gem Visa", "v1"),
-      new Product(10, "CREDIT_CARD", "28 Degrees", "v1"),
-      new Product(11, "PERSONAL_LOAN", "MyFlexiPay", "v2"),
+      new Product("9", "CREDIT_CARD", "Gem Visa", "v1", 59.95),
+      new Product("10", "CREDIT_CARD", "28 Degrees", "v1", 28.0),
+      new Product("11", "PERSONAL_LOAN", "MyFlexiPay", "v2", 199.0),
     ]);
   },
   // GET /products with invalid token — state is irrelevant; auth check happens first
@@ -57,7 +57,7 @@ const setupStateHandlers = {
   // GET /products/10 — product with ID 10 must exist
   getProductByID_Success: async (repo) => {
     await repo.setupProducts([
-      { id: 10, type: "CREDIT_CARD", name: "28 Degrees", version: "v1" }
+      { id: "10", type: "CREDIT_CARD", name: "28 Degrees", version: "v1", price: 28.0 }
     ]);
   },
   // GET /products/invalid — validation rejects before hitting the store; state irrelevant

@@ -26,7 +26,7 @@ exports.getAll = async (req, res) => {
 
 exports.getById = async (req, res) => {
     console.log("getById", req.params.id);
-    if (!req.params.id || Number.isNaN(parseInt(req.params.id)) ) {
+    if (!req.params.id) {
         res.status(400).send({message: "Product ID is required"});
         return;
     }
@@ -38,7 +38,7 @@ exports.getById = async (req, res) => {
 exports.create = async (req, res) => {
     console.log("create", req.body);
     try {
-        const product = new Product(req.body.id, req.body.type, req.body.name, req.body.version);
+        const product = new Product(req.body.id, req.body.type, req.body.name, req.body.version, req.body.price);
         const repo = await initializeRepository();
         await repo.add(product);
         res.status(201).send()

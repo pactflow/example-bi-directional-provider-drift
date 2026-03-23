@@ -1,5 +1,5 @@
-PACTICIPANT := "pactflow-example-provider"
-GITHUB_REPO := "pactflow/example-provider"
+PACTICIPANT := "pactflow-example-bi-directional-provider-drift"
+GITHUB_REPO := "pactflow/example-bi-directional-provider-drift"
 PACT_CHANGED_WEBHOOK_UUID := "c76b601e-d66a-4eb1-88a4-6ebc50c0df8b"
 PACT_CLI=docker run --rm -v ${PWD}:/app/tmp -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact:latest
 OAS_PATH=/app/tmp/openapi.yaml
