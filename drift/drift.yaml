@@ -1,0 +1,163 @@
+# yaml-language-server: $schema=https://download.pactflow.io/drift/schemas/drift.testcases.v1.schema.json
+
+# Drift test case definitions — In-Memory Repository
+#
+# This file defines the test operations that Drift will execute against the
+# running API server. For each operation, Drift will:
+#   1. Fire an `operation:started` event (handled by product.lua → seeds test state)
+#   2. Send the HTTP request described by the target OAS operationId
+#   3. Validate the response against the OAS (status code, schema, headers)
+#   4. Fire an `operation:finished` event (handled by product.lua → resets test state)
+#
+# Sources:
+#   source-oas   — the OpenAPI spec that Drift validates responses against
+#   product-data — reusable test data referenced with ${product-data:<path>} syntax
+#   functions    — Lua script providing lifecycle hooks and the bearer_token function
+#
+# The `global.auth` block applies a Bearer token to every operation by default.
+# Individual operations can opt out with `exclude: [auth]` (used for 401 tests).
+
+drift-testcase-file: v1
+title: "Product API Tests"
+
+sources:
+  - name: source-oas
+    path: ../openapi.yaml
+  - name: product-data
+    path: product.dataset.yaml
+  - name: functions
+    path: product.lua
+
+plugins:
+  - name: oas           # validates responses against the OpenAPI spec
+  - name: json          # JSON request/response handling
+  - name: data          # enables ${product-data:...} dataset interpolation
+  - name: http-dump     # logs request/response details on failure
+  - name: junit-output  # writes a JUnit XML report to output/reports/junit/
+
+global:
+  auth:
+    apply: true
+    parameters:
+      authentication:
+        scheme: bearer
+        token: ${functions:bearer_token} # calls bearer_token() in product.lua at runtime
+        # token: ${env:BEARER_TOKEN}     # alternative: read token from environment variable
+
+operations:
+  # GIVEN a valid bearer token
+  # WHEN getting all products
+  # THEN expect 200 OK response with product array
+  getAllProducts_Success:
+    target: source-oas:getAllProducts
+    description: "Get all products successfully"
+    expected:
+      response:
+        statusCode: 200
+
+  # GIVEN an invalid bearer token
+  # WHEN getting all products
+  # THEN expect 401 Unauthorized response
+  getAllProducts_Unauthorized:
+    target: source-oas:getAllProducts
+    description: "Get all products with invalid authorization"
+    exclude:
+      - auth
+    parameters:
+      headers:
+        authorization: "Bearer invalid-token"
+    expected:
+      response:
+        statusCode: 401
+
+  # GIVEN a valid bearer token and product data
+  # WHEN creating a product
+  # THEN expect 201 Created response
+  createProduct_Success:
+    target: source-oas:createProduct
+    description: "Create a product successfully"
+    dataset: product-data
+    expected:
+      response:
+        statusCode: 201
+
+  # GIVEN a valid bearer token and example product data
+  # WHEN creating a product
+  # THEN expect 201 Created response
+  createProduct_SuccessWithExample:
+    target: source-oas:createProduct
+    description: "Create a product using OpenAPI example"
+    expected:
+      response:
+        statusCode: 201
+
+  # GIVEN an invalid bearer token
+  # WHEN creating a product
+  # THEN expect 401 Unauthorized response
+  createProduct_Unauthorized:
+    target: source-oas:createProduct
+    description: "Create a product with invalid authorization"
+    exclude:
+      - auth
+    parameters:
+      headers:
+        authorization: "Bearer invalid-token"
+    expected:
+      response:
+        statusCode: 401
+
+  # GIVEN a valid bearer token and product ID
+  # WHEN getting a product by ID
+  # THEN expect 200 OK response with product details
+  getProductByID_Success:
+    target: source-oas:getProductByID
+    description: "Get a product by ID successfully"
+    dataset: product-data
+    parameters:
+      path:
+        id: ${product-data:products.product10.id}
+    expected:
+      response:
+        statusCode: 200
+
+  # GIVEN a valid bearer token and invalid product ID
+  # WHEN getting a product by ID
+  # THEN expect 400 Bad Request response
+  getProductByID_InvalidID:
+    target: source-oas:getProductByID
+    description: "Get a product with invalid ID format"
+    parameters:
+      path:
+        id: "invalid"
+    expected:
+      response:
+        statusCode: 400
+
+  # GIVEN a valid bearer token and non-existent product ID
+  # WHEN getting a product by ID
+  # THEN expect 404 Not Found response
+  getProductByID_NotFound:
+    target: source-oas:getProductByID
+    description: "Get a product that does not exist"
+    parameters:
+      path:
+        id: 99999
+    expected:
+      response:
+        statusCode: 404
+
+  # GIVEN an invalid bearer token
+  # WHEN getting a product by ID
+  # THEN expect 401 Unauthorized response
+  getProductByID_Unauthorized:
+    target: source-oas:getProductByID
+    description: "Get a product with invalid authorization"
+    exclude:
+      - auth
+    parameters:
+      headers:
+        authorization: "Bearer invalid-token"
+    expected:
+      response:
+        statusCode: 401
+        # statusCode: ${functions:validate_unauthorized}

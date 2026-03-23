@@ -1,0 +1,127 @@
+openapi: 3.1.1
+info:
+  title: Product API
+  description: PactFlow Product API demo
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /products:
+    get:
+      summary: List all products
+      description: Returns all products
+      operationId: getAllProducts
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json;charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+              examples:
+                application/json:
+                  value:
+                    - id: 10
+                      type: "beverage"
+                      price: 10.99
+                      name: "cola"
+                      version: "1.0.0"
+        "401":
+          description: Unauthorized - missing or invalid token
+          content: {}
+    post:
+      summary: Create a product
+      description: Creates a new product
+      operationId: createProduct
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Create a new Product
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+            examples:
+              application/json:
+                value:
+                  id: 666
+                  type: "beverage"
+                  price: 10.99
+                  name: "cola"
+                  version: "1.0.0"
+        required: true
+      responses:
+        "201":
+          description: successful operation
+        "401":
+          description: Unauthorized - missing or invalid token
+          content: {}
+  /product/{id}:
+    get:
+      summary: Find product by ID
+      description: Returns a single product
+      operationId: getProductByID
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        description: ID of product to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: number
+        example: 10
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Product'
+              examples:
+                application/json:
+                  value:
+                    id: 10
+                    type: "beverage"
+                    price: 10.99
+                    name: "cola"
+                    version: "1.0.0"
+        "400":
+          description: Invalid ID supplied
+          content: {}
+        "401":
+          description: Unauthorized - missing or invalid token
+          content: {}
+        "404":
+          description: Product not found
+          content: {}
+components:
+  securitySchemes:
+    # Bearer token format is "Bearer <ISO8601 timestamp>"
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - price
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        price:
+          type: number

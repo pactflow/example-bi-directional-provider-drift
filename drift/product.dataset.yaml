@@ -1,0 +1,11 @@
+drift-dataset-file: V1
+datasets:
+  - name: product-data
+    data:
+      products:
+        product10:
+          id: 10
+          type: "beverage"
+          price: 10.99
+          name: "cola"
+          version: "1.0.0"

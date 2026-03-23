@@ -1,0 +1,33 @@
+{
+  "name": "product-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "NODE_ENV=test node server.js",
+    "start:postgres": "NODE_ENV=test REPOSITORY_TYPE=postgres DB_HOST=localhost DB_PORT=5432 DB_USER=postgres DB_PASSWORD=postgres DB_NAME=product_service node server.js",
+    "db:start": "docker compose up -d",
+    "db:stop": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d",
+    "state-server:start": "node ./automation/setup-postgres-state-http.js server",
+    "state-server:stop": "lsof -ti:9000 | xargs kill -9 2>/dev/null || true",
+    "test": "npm run test:inmemory && npm run test:postgres",
+    "test:postgres": "NODE_ENV=test npm run db:start && npm run state-server:start & npx jest --colors --testTimeout 30000 --testMatch \"**/*-postgres.test.js\" && npm run state-server:stop",
+    "test:inmemory": "NODE_ENV=test npx jest --colors --testTimeout 30000 --testMatch \"**/api-inmemory.test.js\""
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "pg": "^8.10.0",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "@pact-foundation/pact": "^12.1.0",
+    "@pact-foundation/pact-node": "^10.17.2",
+    "@pactflow/drift": "^2603.0.4-beta.17",
+    "dotenv": "^8.2.0",
+    "eslint": "^8.12.0",
+    "jest": "^27.5.1"
+  },
+  "license": "ISC"
+}
