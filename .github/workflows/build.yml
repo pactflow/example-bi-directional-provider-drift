@@ -15,11 +15,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
-          node-version: '18'
+          node-version: '24'
       
       - name: Download and install Drift
         run: |
@@ -33,7 +33,7 @@ jobs:
         run: GIT_BRANCH=${GITHUB_REF:11} make ci
       
       - name: Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         if: always()
         with:
           name: JUnit Test Results
@@ -42,7 +42,7 @@ jobs:
           fail-on-error: false
       
       - name: Store JUnit report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: junit-report
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - run: docker pull pactfoundation/pact:latest
       - name: Can I deploy?
         run: GIT_BRANCH=${GITHUB_REF:11} make can_i_deploy
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: can-i-deploy
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - run: docker pull pactfoundation/pact:latest
       - name: Deploy
         run: GIT_BRANCH=${GITHUB_REF:11} make deploy
