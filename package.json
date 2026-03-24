@@ -25,7 +25,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@pact-foundation/pact-cli": "^18.0.0",
-    "@pactflow/drift": "^2603.0.5-beta.18",
+    "@pactflow/drift": "^2603.0.7-beta.19",
     "dotenv": "^17.3.1",
     "cross-env": "10.1.0",
     "eslint": "^10.1.0",
