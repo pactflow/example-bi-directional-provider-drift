@@ -9,8 +9,8 @@ REPORT_PATH?=${MOUNT}/output/results/
 REPORT_FILE_CONTENT_TYPE?=application/vnd.smartbear.drift.result
 VERIFIER_TOOL?=drift
 
-# Only deploy from master
-ifeq ($(GIT_BRANCH),master)
+# Only deploy from main
+ifeq ($(GIT_BRANCH),main)
 	DEPLOY_TARGET=deploy
 else
 	DEPLOY_TARGET=no_deploy
@@ -80,7 +80,7 @@ publish_provider_contract:
 deploy: deploy_app record_deployment
 
 no_deploy:
-	@echo "Not deploying as not on master branch"
+	@echo "Not deploying as not on main branch"
 
 can_i_deploy: .env
 	${PACT_CLI} broker can-i-deploy --pacticipant ${PACTICIPANT} --version ${GIT_COMMIT} --to-environment production
@@ -89,7 +89,7 @@ deploy_app:
 	@echo "Deploying to production"
 
 record_deployment: .env
-	@${PACT_CLI} broker record_deployment --pacticipant ${PACTICIPANT} --version ${GIT_COMMIT} --environment production
+	${PACT_CLI} broker record_deployment --pacticipant ${PACTICIPANT} --version ${GIT_COMMIT} --environment production
 
 ## ======================
 ## Misc
