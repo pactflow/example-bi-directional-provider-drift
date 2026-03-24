@@ -13,7 +13,8 @@
     "state-server:start": "node ./automation/setup-postgres-state-http.js server",
     "state-server:stop": "lsof -ti:9000 | xargs kill -9 2>/dev/null || true",
     "test": "npm run test:inmemory && npm run test:postgres",
-    "test:postgres": "cross-env NODE_ENV=test npm run db:start && npm run state-server:start & npx jest --colors --testTimeout 30000 --testMatch \"**/*-postgres.test.js\" && npm run state-server:stop",
+    "test:postgres:files": "cross-env NODE_ENV=test npx jest --colors --testTimeout 30000 --testMatch \"**/*-postgres.test.js\"",
+    "test:postgres": "cross-env NODE_ENV=test npm run db:start && start-server-and-test state-server:start localhost:9000/health test:postgres:files",
     "test:inmemory": "cross-env NODE_ENV=test npx jest --colors --testTimeout 30000 --testMatch \"**/api-inmemory.test.js\""
   },
   "dependencies": {
@@ -30,6 +31,7 @@
     "cross-env": "10.1.0",
     "eslint": "^10.1.0",
     "jest": "^30.3.0",
+    "start-server-and-test": "^2.1.5",
     "globals": "17.4.0"
   },
   "license": "ISC"
