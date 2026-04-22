@@ -76,6 +76,9 @@ operations:
     target: source-oas:createProduct
     description: "Create a product successfully"
     dataset: product-data
+    parameters:
+      request:
+        body: ${product-data:products.product10}
     expected:
       response:
         statusCode: 201
